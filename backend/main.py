@@ -186,15 +186,19 @@ async def api_chat_stream(request: ChatRequest):
         raise HTTPException(status_code=422, detail="问题不能为空")
 
     async def event_generator():
-        async for event_type, data in astream(request.question.strip()):
-            if event_type == "token":
-                yield f"data: {json.dumps({'type': 'token', 'content': data}, ensure_ascii=False)}\n\n"
-            elif event_type == "sources":
-                yield f"data: {json.dumps({'type': 'sources', 'sources': data}, ensure_ascii=False)}\n\n"
-            elif event_type == "done":
-                yield f"data: {json.dumps({'type': 'done'})}\n\n"
-            elif event_type == "error":
-                yield f"data: {json.dumps({'type': 'error', 'content': data}, ensure_ascii=False)}\n\n"
+        try:
+            async for event_type, data in astream(request.question.strip()):
+                if event_type == "token":
+                    yield f"data: {json.dumps({'type': 'token', 'content': data}, ensure_ascii=False)}\n\n"
+                elif event_type == "sources":
+                    yield f"data: {json.dumps({'type': 'sources', 'sources': data}, ensure_ascii=False)}\n\n"
+                elif event_type == "done":
+                    yield f"data: {json.dumps({'type': 'done'})}\n\n"
+                elif event_type == "error":
+                    yield f"data: {json.dumps({'type': 'error', 'content': data}, ensure_ascii=False)}\n\n"
+        except Exception as e:
+            yield f"data: {json.dumps({'type': 'error', 'content': f'流式输出异常: {str(e)}'}, ensure_ascii=False)}\n\n"
+            yield f"data: {json.dumps({'type': 'done'})}\n\n"
 
     return StreamingResponse(
         event_generator(),
