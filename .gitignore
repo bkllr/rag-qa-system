@@ -1,3 +1,27 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+
+# Environment (包含 API Key，不能推)
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# Vector index (太大)
+backend/data/chroma_db/
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Start script
+start.bat
+
+# Logs
+*.log
 # Python
 __pycache__/
 *.py[cod]
