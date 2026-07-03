@@ -168,34 +168,25 @@ python test_rag.py
 
 ## 🤖 AI Native 开发实践
 
-本项目全程使用 AI 辅助开发，践行 AI Native 开发范式：
+本项目全程使用 AI 辅助开发，从技术选型到代码生成、调试修复均通过对话式交互完成。
 
-### 1. 对话式架构设计
+### 1. 技术选型
 
-通过多轮 AI 对话完成技术选型：
-- **LLM 选型**: DeepSeek API（性价比最优，OpenAI 兼容）
-- **Embedding 选型**: text2vec-base-chinese（本地运行，中文效果最佳）
-- **前端方案**: Vue 3 + Vite（轻量、响应式、SSE 友好）
-- **文档生成策略**: 脚本批量生成（可控、可重复）
+通过 AI 对话快速对比并确定方案：
+- **LLM**: DeepSeek API（OpenAI 兼容接口，国内可直接调用）
+- **Embedding**: text2vec-base-chinese（本地运行，无 API 依赖）
+- **前端**: Vue 3 + Vite（轻量、对 SSE 流式友好）
 
-### 2. AI 辅助代码生成
+### 2. 代码生成
 
-| 模块 | 代码行数 | AI 参与度 | 关键亮点 |
-|:--|:--|:--|:--|
-| `config.py` | 102 | 95% | 单例工厂模式 |
-| `document_loader.py` | 112 | 90% | 多格式支持 |
-| `vector_store.py` | 225 | 85% | 持久化 + 索引重建 |
-| `rag_engine.py` | 255 | 90% | LCEL 流式管道 + 防幻觉 Prompt |
-| `main.py` | 222 | 90% | lifespan 自动构建索引 |
-| `test_rag.py` | 142 | 95% | 20 个测试用例 |
-| `generate_docs.py` | 1622 | 85% | 多主题模板生成 |
-| 前端组件 | ~730 | 95% | SSE 流式 + Markdown 渲染 |
-
-**总计**: AI 参与度约 **90%**，人工主要进行精度调优和 Prompt 优化。
+项目主体代码由 AI 生成，人工主要负责：
+- 业务逻辑的精度调优
+- RAG Prompt 的迭代优化
+- 实际运行中的 Bug 修复
 
 ### 3. RAG 防幻觉策略
 
-在 Prompt 模板中强制约束 LLM 行为：
+在 Prompt 模板中约束 LLM 行为：
 
 ```
 【回答规则】
@@ -203,21 +194,13 @@ python test_rag.py
 2. 如果参考资料中没有相关信息，请明确回答："未在文档中找到相关内容"。
 ```
 
-这是 AI Native 开发中的重要实践：**通过 Prompt Engineering 约束模型行为，而非过度依赖代码逻辑**。
+### 4. 开发过程中遇到的典型问题
 
-### 4. 开发日志留痕
-
-AI 对话截图保存在 `backend/ai-logs/` 目录，记录关键开发节点的 AI 对话内容。
-
-### 5. AI 辅助调试与修复
-
-在开发过程中遇到的关键 Bug：
-
-| 问题 | AI 修复方案 | 经验教训 |
-|:--|:--|:--|
-| Python 三引号末尾逗号变元组 | 定位到 `topics["..."] = """...\n""",` 模式，编写精准修复脚本 | Python 字符串赋值时注意逗号 |
-| Chroma L2 距离 → 相似度转换 | `1.0 / (1.0 + score)` 公式 | 向量数据库的距离度量需要正确映射 |
-| PowerShell 变量符号与 Python `$` 冲突 | 将 Python 代码写入文件后执行 | 跨 shell 调用需注意转义 |
+| 问题 | 解决方式 |
+|:--|:--|
+| Python 三引号末尾逗号变元组 | 定位到 `topics["..."] = """...\n""",` 模式，编写修复脚本 |
+| Chroma L2 距离 → 相似度转换 | 采用 `1.0 / (1.0 + score)` 公式 |
+| Vue 3 响应式代理问题 | `ref` push 后通过索引访问 Proxy 对象 |
 
 ---
 
@@ -256,21 +239,14 @@ AI 对话截图保存在 `backend/ai-logs/` 目录，记录关键开发节点的
 
 ---
 
-## 📝 项目方法论沉淀
+## 📝 技术选型说明
 
-### 为什么选择这个技术栈
-
-1. **FastAPI > Flask**: 原生异步支持，对 SSE 流式输出更友好；自带交互式文档
-2. **Chroma > FAISS**: 持久化更简单，无需额外转换；Python 原生集成更好
-3. **text2vec-base-chinese > OpenAI Embedding**: 本地免费，中文效果更好；避免 API 调用延迟
-4. **Vue 3 > React**: Composition API 对 SSE 的响应式绑定更简洁；学习曲线更平滑
-
-### AI Native 开发的关键原则
-
-1. **Prompt 即代码**: 防幻觉 Prompt 的价值不亚于业务逻辑
-2. **流式优先**: SSE 流式输出极大提升用户体验（不需要等待完整回答）
-3. **来源可追溯**: 每条回答附带来源引用，增强可信度
-4. **可量化验证**: 通过 test_rag.py 客观评估检索质量
+| 选择 | 替代方案 | 原因 |
+|:--|:--|:--|
+| FastAPI | Flask | 原生异步，SSE 流式输出更自然；自带 Swagger 文档 |
+| Chroma | FAISS | 持久化简单，Python 原生集成好 |
+| text2vec-base-chinese | OpenAI Embedding | 本地运行免费，中文效果不错 |
+| Vue 3 | React | Composition API 对 SSE 响应式绑定简洁 |
 
 ---
 
