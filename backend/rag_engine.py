@@ -65,7 +65,7 @@ def _build_context(docs_with_scores: List[Tuple[Document, float]]) -> str:
         similarity = max(0.0, min(1.0, 1.0 / (1.0 + score)))
 
         parts.append(
-            f"【片段 {i} - 来源: {source} - 相似度: {similarity:.0%}】\n{doc.page_content}\n"
+            f"【片段 {i} - 来源: {source} - 相似度: {similarity:.0%}】\n{doc.page_content or ''}\n"
         )
 
     return "\n".join(parts)
@@ -84,8 +84,9 @@ def _format_sources(docs_with_scores: List[Tuple[Document, float]]) -> List[dict
     sources = []
     for doc, score in docs_with_scores:
         similarity = max(0.0, min(1.0, 1.0 / (1.0 + score)))
+        content = doc.page_content or ""
         sources.append({
-            "content": doc.page_content[:200],  # 截取前 200 字
+            "content": content[:200],  # 截取前 200 字
             "filename": doc.metadata.get("source", "未知"),
             "score": round(similarity, 4),
         })
@@ -113,34 +114,36 @@ def query(question: str, k: int = 4) -> Dict:
     """
     start_time = time.time()
 
-    # Step 1: 向量检索
-    store = get_vector_store()
-    docs_with_scores = store.search(question, k=k)
-
-    if not docs_with_scores:
-        elapsed = time.time() - start_time
-        return {
-            "answer": "未在文档中找到相关内容。",
-            "sources": [],
-            "elapsed": round(elapsed, 3),
-        }
-
-    # Step 2: 构建 context
-    context = _build_context(docs_with_scores)
-
-    # Step 3: 构建 LCEL 链并生成
-    llm = get_llm()
-    prompt = ChatPromptTemplate.from_template(RAG_PROMPT_TEMPLATE)
-    chain = prompt | llm | StrOutputParser()
-
     try:
+        # Step 1: 向量检索
+        store = get_vector_store()
+        docs_with_scores = store.search(question, k=k)
+
+        if not docs_with_scores:
+            elapsed = time.time() - start_time
+            return {
+                "answer": "未在文档中找到相关内容。",
+                "sources": [],
+                "elapsed": round(elapsed, 3),
+            }
+
+        # Step 2: 构建 context
+        context = _build_context(docs_with_scores)
+
+        # Step 3: 构建 LCEL 链并生成
+        llm = get_llm()
+        prompt = ChatPromptTemplate.from_template(RAG_PROMPT_TEMPLATE)
+        chain = prompt | llm | StrOutputParser()
+
         answer = chain.invoke({"context": context, "question": question})
+
     except Exception as e:
-        answer = f"生成回答时出错: {str(e)}"
+        answer = f"查询出错: {str(e)}"
+        docs_with_scores = []
 
     # Step 4: 组装返回
     elapsed = time.time() - start_time
-    sources = _format_sources(docs_with_scores)
+    sources = _format_sources(docs_with_scores) if docs_with_scores else []
 
     return {
         "answer": answer,
@@ -180,35 +183,34 @@ async def astream(
     """
     start_time = time.time()
 
-    # Step 1: 向量检索
-    store = get_vector_store()
-    docs_with_scores = store.search(question, k=k)
-
-    if not docs_with_scores:
-        yield ("token", "未在文档中找到相关内容。")
-        yield ("sources", [])
-        yield ("done", None)
-        return
-
-    # Step 2: 构建 context
-    context = _build_context(docs_with_scores)
-
-    # Step 3: 流式生成
-    llm = get_llm()
-    prompt = ChatPromptTemplate.from_template(RAG_PROMPT_TEMPLATE)
-    chain = prompt | llm | StrOutputParser()
-
     try:
+        # Step 1: 向量检索
+        store = get_vector_store()
+        docs_with_scores = store.search(question, k=k)
+
+        if not docs_with_scores:
+            yield ("token", "未在文档中找到相关内容。")
+            yield ("sources", [])
+            yield ("done", None)
+            return
+
+        # Step 2: 构建 context
+        context = _build_context(docs_with_scores)
+
+        # Step 3: 流式生成
+        llm = get_llm()
+        prompt = ChatPromptTemplate.from_template(RAG_PROMPT_TEMPLATE)
+        chain = prompt | llm | StrOutputParser()
+
         async for chunk in chain.astream({"context": context, "question": question}):
             yield ("token", chunk)
-    except Exception as e:
-        yield ("error", f"生成回答时出错: {str(e)}")
-        yield ("done", None)
-        return
 
-    # Step 4: 返回来源
-    sources = _format_sources(docs_with_scores)
-    yield ("sources", sources)
+        # Step 4: 返回来源
+        sources = _format_sources(docs_with_scores)
+        yield ("sources", sources)
+
+    except Exception as e:
+        yield ("error", f"查询出错: {str(e)}")
 
     # 记录耗时
     elapsed = time.time() - start_time
