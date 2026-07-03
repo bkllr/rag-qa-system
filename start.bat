@@ -3,10 +3,35 @@ title RAG QA System
 
 :menu
 cls
+setlocal enabledelayedexpansion
 echo ============================================
 echo    RAG QA System - AI Doc Q&A
 echo ============================================
 echo.
+
+:: --- 端口检测 ---
+set "p8000="
+set "p5173="
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":8000.*LISTENING"') do (
+    if not defined p8000 (set "p8000=%%a") else (set "p8000=!p8000!,%%a")
+)
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":5173.*LISTENING"') do (
+    if not defined p5173 (set "p5173=%%a") else (set "p5173=!p5173!,%%a")
+)
+
+if defined p8000 (
+    echo    [!!] Port 8000 occupied by PID: !p8000!
+) else (
+    echo    [OK] Port 8000 free
+)
+if defined p5173 (
+    echo    [!!] Port 5173 occupied by PID: !p5173!
+) else (
+    echo    [OK] Port 5173 free
+)
+echo.
+endlocal
+
 echo    [1] Start Backend  (FastAPI :8000)
 echo    [2] Start Frontend (Vite   :5173)
 echo    [3] Start Both
@@ -14,6 +39,7 @@ echo    [4] Install Backend Deps
 echo    [5] Install Frontend Deps
 echo    [6] Rebuild Vector Index
 echo    [7] Restart Both Services
+echo    [8] Kill All and Start Fresh
 echo    [0] Exit
 echo.
 set /p choice=Select option: 
@@ -25,6 +51,7 @@ if "%choice%"=="4" goto install_backend
 if "%choice%"=="5" goto install_frontend
 if "%choice%"=="6" goto rebuild_index
 if "%choice%"=="7" goto restart_both
+if "%choice%"=="8" goto kill_and_start
 if "%choice%"=="0" goto exit
 goto menu
 
@@ -115,6 +142,41 @@ for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":8000.*LISTENING"') do taskk
 for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":5173.*LISTENING"') do taskkill /PID %%a /F 2^>nul
 for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":5174.*LISTENING"') do taskkill /PID %%a /F 2^>nul
 timeout /t 2 /nobreak ^>nul
+goto start_both
+
+:kill_and_start
+cls
+setlocal enabledelayedexpansion
+echo === Kill All Processes and Start Fresh ===
+echo.
+echo Scanning ports...
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":8000.*LISTENING"') do (
+    echo Killing PID %%a on port 8000...
+    taskkill /PID %%a /F 2^>nul
+)
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":5173.*LISTENING"') do (
+    echo Killing PID %%a on port 5173...
+    taskkill /PID %%a /F 2^>nul
+)
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":5174.*LISTENING"') do (
+    echo Killing PID %%a on port 5174...
+    taskkill /PID %%a /F 2^>nul
+)
+echo.
+echo Waiting 2 seconds...
+timeout /t 2 /nobreak ^>nul
+echo.
+set "p8000="
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":8000.*LISTENING"') do set "p8000=1"
+if defined p8000 (
+    echo [ERROR] Port 8000 still occupied! Run this script as Administrator.
+    pause
+    goto menu
+) else (
+    echo [OK] Ports are clean. Starting services...
+)
+endlocal
+timeout /t 1 /nobreak ^>nul
 goto start_both
 
 :exit
