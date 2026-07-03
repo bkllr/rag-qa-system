@@ -10,6 +10,8 @@ RAG QA System - 核心 RAG 引擎模块
 支持同步查询（query）和异步流式输出（astream）。
 """
 
+from __future__ import annotations
+
 import json
 import time
 import asyncio
