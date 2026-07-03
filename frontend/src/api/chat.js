@@ -17,7 +17,7 @@
 export function streamChat(question, { onToken, onSource, onDone, onError }) {
   const controller = new AbortController();
 
-  fetch("/api/chat/stream", {
+  fetch("http://localhost:8000/api/chat/stream", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ question }),
