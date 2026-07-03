@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# 虚拟环境
+venv/
+env/
+.venv/
+
+# 环境变量与敏感配置
+.env
+*.env.local
+
+# Chroma 持久化数据
+backend/chroma_db/
+
+# Node.js
+node_modules/
+frontend/node_modules/
+frontend/dist/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# AI 对话截图（可选提交，这里不忽略）
+# backend/ai-logs/
+
+# 日志
+*.log

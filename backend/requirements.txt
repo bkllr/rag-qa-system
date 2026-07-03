@@ -1,0 +1,28 @@
+# Web 框架
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+
+# 配置管理
+python-dotenv==1.0.1
+
+# LangChain 核心与社区扩展
+langchain==0.3.14
+langchain-core==0.3.27
+langchain-community==0.3.14
+
+# LangChain 集成包
+langchain-openai==0.2.14
+langchain-chroma==0.1.4
+langchain-huggingface==0.1.2
+
+# 向量数据库
+chromadb==0.5.23
+
+# Embedding 模型
+sentence-transformers==3.3.1
+
+# PDF 文档解析
+pypdf==5.1.0
+
+# HTTP 请求（部分加载器依赖）
+requests==2.32.3
