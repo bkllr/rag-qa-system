@@ -1,7 +1,7 @@
 """
 RAG QA System - 自动测试脚本
 
-预定义 20 个测试问题 + 期望答案特征，
+预定义 30 个测试问题 + 期望答案特征，
 对每个问题调用 rag_engine.query()，
 输出 PASS/FAIL 报告和准确率。
 """
@@ -37,6 +37,17 @@ TEST_CASES = [
     ("Vite 如何配置开发代理？", ["proxy", "target"]),
     ("RAG Prompt 中必须加入什么约束？", ["编造", "如实", "找不到"]),
     ("Python dotenv 库的作用是什么？", [".env", "环境变量"]),
+    # ── 扩展测试用例 ──
+    ("Docker 的核心概念有哪些？", ["容器", "镜像", "Container", "Image"]),
+    ("什么是微服务架构？", ["服务", "独立", "部署"]),
+    ("Git 的 rebase 和 merge 有什么区别？", ["分支", "历史", "commit"]),
+    ("Redis 支持哪些数据结构？", ["String", "Hash", "List", "Set"]),
+    ("什么是 SQL 注入攻击？", ["SQL", "注入", "安全"]),
+    ("Kubernetes 的核心组件有哪些？", ["Pod", "Service", "kubelet"]),
+    ("Python 的 GIL 是什么？", ["全局解释器锁", "线程", "Global"]),
+    ("什么是 CI/CD 流水线？", ["持续集成", "部署", "自动化"]),
+    ("MongoDB 和 MySQL 的主要区别？", ["NoSQL", "关系型", "文档"]),
+    ("RESTful API 的设计原则有哪些？", ["资源", "HTTP", "无状态"]),
 ]
 
 
