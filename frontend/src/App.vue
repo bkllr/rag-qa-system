@@ -64,31 +64,40 @@ async function handleSend(question) {
   })
 
   // 添加 AI 占位消息（流式追加内容）
-  const aiMsg = {
+  // 注意：push 后 Vue 3 Proxy 包装，必须通过 messages.value 索引访问代理对象
+  messages.value.push({
     role: 'assistant',
     content: '',
     sources: [],
     streaming: true,
-  }
-  messages.value.push(aiMsg)
+  })
   loading.value = true
+
+  // 通过闭包捕获最后一个消息的索引，确保操作的是 Vue 响应式代理对象
+  const aiIndex = messages.value.length - 1
 
   // 发起 SSE 流式请求
   cancelStream = streamChat(question, {
     onToken(token) {
-      aiMsg.content += token
+      const msg = messages.value[aiIndex]
+      if (msg) msg.content += token
     },
     onSource(sources) {
-      aiMsg.sources = sources
+      const msg = messages.value[aiIndex]
+      if (msg) msg.sources = sources
     },
     onDone() {
-      aiMsg.streaming = false
+      const msg = messages.value[aiIndex]
+      if (msg) msg.streaming = false
       loading.value = false
       cancelStream = null
     },
     onError(err) {
-      aiMsg.streaming = false
-      aiMsg.content = `请求失败: ${err.message}。请确保后端服务已启动且 API Key 配置正确。`
+      const msg = messages.value[aiIndex]
+      if (msg) {
+        msg.streaming = false
+        msg.content = `请求失败: ${err.message}。请确保后端服务已启动且 API Key 配置正确。`
+      }
       loading.value = false
       cancelStream = null
     },
