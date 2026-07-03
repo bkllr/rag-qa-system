@@ -12,10 +12,11 @@ RAG QA System - FastAPI 主入口
 
 import json
 import sys
+import time
 from pathlib import Path
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
@@ -120,6 +121,23 @@ app.add_middleware(
 
 
 # ──────────────────────────────────────────────
+# 请求日志中间件
+# ──────────────────────────────────────────────
+
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    """记录每个请求的方法、路径和耗时。"""
+    start = time.time()
+    response = await call_next(request)
+    elapsed = time.time() - start
+    # 跳过静态资源和健康检查
+    if not request.url.path.startswith("/api"):
+        return response
+    print(f"  [{request.method}] {request.url.path} → {response.status_code} ({elapsed:.3f}s)")
+    return response
+
+
+# ──────────────────────────────────────────────
 # API 端点
 # ──────────────────────────────────────────────
 
@@ -144,7 +162,10 @@ async def api_chat(request: ChatRequest):
     if not request.question or not request.question.strip():
         raise HTTPException(status_code=422, detail="问题不能为空")
 
-    result = query(request.question.strip())
+    try:
+        result = query(request.question.strip())
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"RAG 查询失败: {str(e)}")
     return ChatResponse(**result)
 
 
@@ -198,7 +219,10 @@ async def api_get_documents_info():
 async def api_rebuild_index():
     """重建索引（重新加载文档并构建向量索引）。"""
     store = get_vector_store()
-    chunk_count = store.rebuild_from_directory(DOCUMENTS_PATH)
+    try:
+        chunk_count = store.rebuild_from_directory(DOCUMENTS_PATH)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"索引重建失败: {str(e)}")
     info = store.get_collection_info()
 
     return RebuildResponse(
