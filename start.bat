@@ -13,6 +13,7 @@ echo    [3] Start Both
 echo    [4] Install Backend Deps
 echo    [5] Install Frontend Deps
 echo    [6] Rebuild Vector Index
+echo    [7] Restart Both Services
 echo    [0] Exit
 echo.
 set /p choice=Select option: 
@@ -23,6 +24,7 @@ if "%choice%"=="3" goto start_both
 if "%choice%"=="4" goto install_backend
 if "%choice%"=="5" goto install_frontend
 if "%choice%"=="6" goto rebuild_index
+if "%choice%"=="7" goto restart_both
 if "%choice%"=="0" goto exit
 goto menu
 
@@ -41,7 +43,7 @@ echo Backend  : http://localhost:8000
 echo API Docs : http://localhost:8000/docs
 echo Close this window to stop the backend.
 echo.
-start "RAG-Backend" cmd /k "cd /d %~dp0backend && python main.py"
+start "RAG-Backend" /d "%~dp0backend" cmd /k python main.py
 goto menu
 
 :start_frontend
@@ -55,7 +57,7 @@ if not exist "node_modules\" (
 echo Frontend : http://localhost:5173
 echo Close this window to stop the frontend.
 echo.
-start "RAG-Frontend" cmd /k "cd /d %~dp0frontend && npm run dev"
+start "RAG-Frontend" /d "%~dp0frontend" cmd /k npm run dev
 goto menu
 
 :start_both
@@ -63,12 +65,12 @@ cls
 echo === Starting Both Services ===
 cd /d "%~dp0backend"
 if not exist ".env" ( echo [WARNING] .env not found! Backend may fail. )
-start "RAG-Backend" cmd /k "cd /d %~dp0backend && python main.py"
-echo [OK] Backend  -> http://localhost:8000
+start "RAG-Backend" /d "%~dp0backend" cmd /k python main.py
+echo [OK] Backend  -^> http://localhost:8000
 cd /d "%~dp0frontend"
 if not exist "node_modules\" ( call npm install )
-start "RAG-Frontend" cmd /k "cd /d %~dp0frontend && npm run dev"
-echo [OK] Frontend -> http://localhost:5173
+start "RAG-Frontend" /d "%~dp0frontend" cmd /k npm run dev
+echo [OK] Frontend -^> http://localhost:5173
 echo.
 echo Both services started in separate windows.
 echo Close each window to stop the corresponding service.
@@ -104,6 +106,14 @@ python -c "from vector_store import get_vector_store; from config import DOCUMEN
 echo.
 pause
 goto menu
+
+:restart_both
+cls
+echo === Restarting Both Services ===
+taskkill /FI "WINDOWTITLE eq RAG-Backend*" /F 2^>nul
+taskkill /FI "WINDOWTITLE eq RAG-Frontend*" /F 2^>nul
+timeout /t 2 /nobreak ^>nul
+goto start_both
 
 :exit
 exit
