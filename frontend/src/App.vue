@@ -8,6 +8,12 @@
         <span class="badge">AI 技术文档智能问答</span>
       </div>
       <div class="header-right">
+        <button
+          v-if="messages.length > 0"
+          class="header-btn"
+          @click="handleClear"
+          title="清空对话"
+        >清空</button>
         <a class="header-link" href="http://localhost:8000/docs" target="_blank" title="API 文档">
           API Docs ↗
         </a>
@@ -30,7 +36,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import ChatWindow from './components/ChatWindow.vue'
 import ChatInput from './components/ChatInput.vue'
 import { streamChat } from './api/chat.js'
@@ -92,6 +98,41 @@ async function handleSend(question) {
 function handleQuickAsk(question) {
   handleSend(question)
 }
+
+// ── 清空对话 ──
+function handleClear() {
+  if (cancelStream) {
+    cancelStream()
+    cancelStream = null
+  }
+  messages.value = []
+  loading.value = false
+}
+
+// ── 本地持久化 ──
+const STORAGE_KEY = 'rag-qa-messages'
+
+function saveMessages() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(messages.value))
+  } catch { /* ignore quota errors */ }
+}
+
+function loadMessages() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY)
+    if (saved) {
+      const parsed = JSON.parse(saved)
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        messages.value = parsed.map(m => ({ ...m, streaming: false }))
+      }
+    }
+  } catch { /* ignore parse errors */ }
+}
+loadMessages()
+
+// 监听消息变化自动保存
+watch(messages, saveMessages, { deep: true })
 </script>
 
 <style>
@@ -177,6 +218,20 @@ html, body {
 }
 .header-link:hover {
   background: rgba(255, 255, 255, 0.15);
+}
+
+.header-btn {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 4px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.header-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
 }
 
 /* ── 滚动条美化 ── */
