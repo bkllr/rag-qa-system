@@ -738,7 +738,7 @@ logger.info(f"[检索] 查询: {query}")
 logger.info(f"[检索] 找到 {len(docs)} 个相关文档")
 logger.info(f"[生成] 耗时: {elapsed:.3f}s")
 ```
-""",
+"""
 
     return topics
 
@@ -783,7 +783,7 @@ def search_docs(query: str) -> str:
 - `name`: 工具名称（LLM 用它来识别）
 - `description`: 工具描述（LLM 用它来判断何时使用）
 - `return_direct`: 是否直接返回结果给用户
-""",
+"""
 
     topics["langchain-memory.md"] = """# LangChain 对话记忆机制
 
@@ -821,7 +821,7 @@ RAG 问答系统通常不需要对话记忆，因为：
 3. 记忆可能引入上下文污染
 
 推荐：无状态 RAG + 每次查询独立检索。
-""",
+"""
 
     topics["langchain-callbacks.md"] = """# LangChain Callbacks 回调系统
 
@@ -861,7 +861,7 @@ chain.invoke(
 - 监控 token 消耗
 - 追踪检索质量
 - 错误告警
-""",
+"""
 
     return topics
 
@@ -908,7 +908,7 @@ Vela 是小米基于 NuttX 打造的物联网嵌入式操作系统。
 - 智能手表
 - IoT 传感器
 - 智能家居网关
-""",
+"""
 
     topics["xiaomi-deepspark.md"] = """# 小米 DeepSpark 深度学习框架
 
@@ -944,7 +944,7 @@ trainer = DeepSparkTrainer(
 )
 trainer.fit(train_data)
 ```
-""",
+"""
 
     topics["xiaomi-aiot-platform.md"] = """# 小米 AIoT 开发者平台
 
@@ -978,7 +978,7 @@ trainer.fit(train_data)
 3. 开发固件（使用 Vela OS 或标准 Linux）
 4. 设备配网与激活
 5. 对接 AI 服务
-""",
+"""
 
     topics["xiaomi-cloud-services.md"] = """# 小米云服务技术架构
 
@@ -1013,7 +1013,7 @@ trainer.fit(train_data)
 - 增量同步：只传变化的数据
 - 冲突解决：基于时间戳的 Last-Write-Wins
 - 离线支持：本地缓存 + 联网后自动合并
-""",
+"""
 
     return topics
 
@@ -1062,7 +1062,7 @@ PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model))
 
 - Encoder：处理输入序列，生成上下文表示
 - Decoder：自回归生成输出序列
-""",
+"""
 
     topics["embedding-models-comparison.md"] = """# Embedding 模型对比与选择
 
@@ -1092,7 +1092,7 @@ evaluator = evaluation.EmbeddingSimilarityEvaluator(
 )
 score = evaluator(model)
 ```
-""",
+"""
 
     topics["llm-fine-tuning.md"] = """# 大语言模型微调方法
 
@@ -1123,7 +1123,7 @@ model = get_peft_model(base_model, config)
 model.print_trainable_parameters()
 # trainable params: 0.5%
 ```
-""",
+"""
 
     topics["tokenization-guide.md"] = """# 分词器原理与实践
 
@@ -1164,7 +1164,7 @@ tokens = tokenizer.encode("你好世界！").tokens
 - 英文：1 token ≈ 0.75 词
 - 中文：1 token ≈ 1.5 字
 - 代码：1 token ≈ 0.5 字符
-""",
+"""
 
     topics["prompt-engineering-advanced.md"] = """# Prompt 工程进阶
 
@@ -1210,7 +1210,7 @@ prompt = \"\"\"
 - 用分隔符隔离
 - 明确优先级规则
 - 提供反例（不要做什么）
-""",
+"""
 
     return topics
 
@@ -1253,7 +1253,7 @@ docker ps
 # 停止容器
 docker stop <container_id>
 ```
-""",
+"""
 
     topics["nginx-reverse-proxy.md"] = """# Nginx 反向代理配置
 
@@ -1298,7 +1298,7 @@ upstream backend {
     server 127.0.0.1:8003;
 }
 ```
-""",
+"""
 
     topics["ci-cd-basics.md"] = """# CI/CD 持续集成与部署
 
@@ -1331,7 +1331,7 @@ jobs:
 2. 合并前必须通过 CI
 3. 自动部署到开发环境
 4. 生产发布需要人工审批
-""",
+"""
 
     return topics
 
@@ -1378,7 +1378,7 @@ class CreateUserRequest(BaseModel):
 2. XSS：转义输出、CSP 头
 3. CSRF：使用 CSRF Token
 4. 速率限制：防止暴力破解
-""",
+"""
 
     topics["env-management-security.md"] = """# 环境变量与密钥管理
 
@@ -1414,7 +1414,7 @@ api_key = get_secret("api/deepseek/key")
 3. 定期轮换密钥
 4. 限制密钥权限范围
 5. 监控密钥使用情况
-""",
+"""
 
     return topics
 
@@ -1422,6 +1422,152 @@ api_key = get_secret("api/deepseek/key")
 # ──────────────────────────────────────────────
 # 主函数
 # ──────────────────────────────────────────────
+
+def _generate_more_topics() -> dict:
+    """生成更多技术主题文档，达到 100+ 目标。"""
+    topics = {}
+    
+    # --- 数据库类 ---
+    topics["sql-basics.md"] = """# SQL 基础语法
+
+## SELECT 查询
+
+```sql
+SELECT name, age FROM users WHERE age > 18 ORDER BY age DESC LIMIT 10;
+```
+
+## JOIN 连接\n\n| JOIN类型 | 说明 |\n|:--|:--|\n| INNER JOIN | 返回两个表匹配的行 |\n| LEFT JOIN | 返回左表所有行 |\n| RIGHT JOIN | 返回右表所有行 |\n
+## 索引优化\n\n```sql\nCREATE INDEX idx_users_age ON users(age);\nCREATE INDEX idx_users_name_age ON users(name, age);\n```\n
+## 聚合函数\n\n- COUNT: 计数\n- SUM: 求和\n- AVG: 平均值\n- MAX/MIN: 最大/最小值\n"""
+
+    topics["nosql-redis-basics.md"] = """# Redis 基础与缓存策略
+
+Redis 是一个高性能的内存键值数据库。\n
+## 数据结构\n\n- String: 字符串\n- Hash: 哈希表\n- List: 列表\n- Set: 集合\n- ZSet: 有序集合\n
+## 缓存策略\n\n### Cache-Aside\n1. 读：先查缓存，miss 则查 DB 并回写缓存\n2. 写：先写 DB，再删缓存\n
+### 缓存穿透防护\n- 布隆过滤器预判 key 是否存在\n- 空值也缓存（短 TTL）\n
+## 过期策略\n\n- TTL: 设置过期时间\n- LRU: 最近最少使用淘汰\n- LFU: 最不经常使用淘汰\n"""
+
+    # --- 前端类 ---
+    topics["css-flexbox-layout.md"] = """# CSS Flexbox 布局详解
+
+Flexbox 是 CSS3 的一维布局模型。\n
+## 容器属性\n\n```css\n.container {\n    display: flex;\n    flex-direction: row;       /* 主轴方向 */\n    justify-content: center;   /* 主轴对齐 */\n    align-items: center;       /* 交叉轴对齐 */\n    gap: 16px;                 /* 间距 */\n    flex-wrap: wrap;           /* 换行 */\n}\n```\n
+## 项目属性\n\n```css\n.item {\n    flex: 1;         /* flex-grow */\n    align-self: flex-end;\n    order: 2;\n}\n```\n
+## 常见布局\n- 水平居中: justify-content: center\n- 垂直居中: align-items: center\n- 两端对齐: justify-content: space-between\n"""
+
+    topics["javascript-async.md"] = """# JavaScript 异步编程
+
+## Promise\n\n```javascript\nfetch("/api/data")\n    .then(res => res.json())\n    .then(data => console.log(data))\n    .catch(err => console.error(err));\n```\n
+## Async/Await\n\n```javascript\nasync function loadData() {\n    try {\n        const res = await fetch("/api/data");\n        const data = await res.json();\n        return data;\n    } catch (err) {\n        console.error(err);\n    }\n}\n```\n
+## ReadableStream\n\n```javascript\nconst reader = response.body.getReader();\nconst decoder = new TextDecoder();\nwhile (true) {\n    const { done, value } = await reader.read();\n    if (done) break;\n    console.log(decoder.decode(value));\n}\n```\n"""
+
+    topics["nodejs-basics.md"] = """# Node.js 基础
+
+Node.js 是一个基于 Chrome V8 引擎的 JavaScript 运行时。\n
+## 模块系统\n\n```javascript\n// 导出\nmodule.exports = { myFunc };\n// 导入\nconst { myFunc } = require("./module");\n\n// ES Modules\nimport { myFunc } from "./module.js";\n```\n
+## 文件操作\n\n```javascript\nconst fs = require("fs");\n\n// 同步\nconst data = fs.readFileSync("file.txt", "utf-8");\n\n// 异步\nfs.readFile("file.txt", "utf-8", (err, data) => {\n    if (err) throw err;\n    console.log(data);\n});\n```\n
+## 包管理\n\n```bash\nnpm init -y\nnpm install express\nnpm install --save-dev nodemon\n```\n"""
+
+    # --- DevOps 扩展 ---
+    topics["linux-common-commands.md"] = """# Linux 常用命令
+
+## 文件操作\n\n```bash\nls -la           # 列出文件\ncd /path         # 切换目录\ncp src dst       # 复制\nmv src dst       # 移动/重命名\nrm -rf dir       # 删除\nfind . -name "*.py"  # 查找文件\n```\n
+## 文本处理\n\n```bash\ngrep "pattern" file.txt     # 搜索\nwc -l file.txt              # 行数\nhead -n 10 file.txt         # 前 10 行\ntail -f file.txt            # 实时跟踪\n```\n
+## 进程管理\n\n```bash\nps aux          # 查看进程\nkill -9 PID     # 终止进程\nhtop            # 交互式进程查看\nnohup cmd &     # 后台运行\n```\n"""
+
+    topics["git-advanced.md"] = """# Git 高级操作
+
+## 变基 Rebase\n\n```bash\ngit rebase main          # 将当前分支变基到 main\ngit rebase -i HEAD~3     # 交互式变基（压缩提交）\n```\n
+## Cherry-Pick\n\n```bash\ngit cherry-pick <commit-hash>  # 将指定提交应用到当前分支\n```\n
+## 暂存 Stash\n\n```bash\ngit stash              # 暂存当前修改\ngit stash pop          # 恢复最近的暂存\ngit stash list         # 查看暂存列表\n```\n
+## 标签\n\n```bash\ngit tag v1.0.0              # 创建标签\ngit tag -a v1.0.0 -m "发布" # 附注标签\ngit push origin --tags      # 推送标签\n```\n"""
+
+    # --- Python 库 ---
+    topics["python-requests-lib.md"] = """# Python requests 库详解
+
+```python\nimport requests\n\n# GET 请求\nresp = requests.get("https://api.example.com/data")\ndata = resp.json()\n\n# POST 请求\nresp = requests.post(\n    "https://api.example.com/submit",\n    json={"name": "test"},\n    headers={"Authorization": "Bearer token"},\n)\n\n# 超时与重试\nresp = requests.get(url, timeout=5)\n\n# 会话（复用连接）\nsession = requests.Session()\nsession.headers.update({"User-Agent": "MyApp/1.0"})\nresp = session.get(url)\n```\n\n## 响应处理\n- resp.status_code: HTTP 状态码\n- resp.json(): JSON 解析\n- resp.text: 文本内容\n- resp.content: 二进制内容\n"""
+
+    topics["python-pathlib.md"] = """# Python pathlib 路径操作
+
+pathlib 是 Python 3.4+ 推荐的路径处理库。\n
+```python\nfrom pathlib import Path\n\n# 当前文件目录\nBASE_DIR = Path(__file__).resolve().parent\n\n# 路径拼接\ndata_dir = BASE_DIR / "data" / "documents"\nconfig_file = BASE_DIR / ".env"\n\n# 目录操作\ndata_dir.mkdir(parents=True, exist_ok=True)\n\n# 遍历文件\nfor file in data_dir.rglob("*.md"):\n    print(file.name, file.stem, file.suffix)\n\n# 文件操作\ncontent = (data_dir / "readme.md").read_text(encoding="utf-8")\n(data_dir / "output.txt").write_text("hello", encoding="utf-8")\n```\n\n## Path vs os.path\n| os.path | pathlib |\n|:--|:--|\n| os.path.join(a, b) | Path(a) / b |\n| os.path.exists(p) | Path(p).exists() |\n| os.path.dirname(p) | Path(p).parent |\n"""
+
+    topics["python-argparse.md"] = """# Python argparse 命令行参数
+
+```python\nimport argparse\n\nparser = argparse.ArgumentParser(description="RAG 文档管理工具")\n\nparser.add_argument("--rebuild", action="store_true", help="重建索引")\nparser.add_argument("--k", type=int, default=4, help="检索返回数")\nparser.add_argument("--query", type=str, help="查询内容")\n\nargs = parser.parse_args()\n\nif args.rebuild:\n    rebuild_index()\nelif args.query:\n    result = query(args.query, k=args.k)\n    print(result["answer"])\n```\n\n## 参数类型\n- store_true: 布尔标志\n- type=str: 字符串\n- type=int: 整数\n- default: 默认值\n- required=True: 必填\n"""
+
+    # --- AI/ML 扩展 ---
+    topics["machine-learning-basics.md"] = """# 机器学习基础概念
+
+## 三大范式\n\n| 类型 | 数据需求 | 典型任务 |\n|:--|:--|:--|\n| 监督学习 | 标注数据 | 分类、回归 |\n| 无监督学习 | 无标注数据 | 聚类、降维 |\n| 强化学习 | 交互环境 | 游戏、控制 |\n
+## 常见算法\n\n- 线性回归: 预测连续值\n- 逻辑回归: 二分类\n- 决策树: 可解释分类\n- SVM: 高维分类\n- K-Means: 聚类\n
+## 评估指标\n\n- 分类: Accuracy, Precision, Recall, F1\n- 回归: MSE, MAE, R2\n- 聚类: Silhouette Score\n"""
+
+    topics["neural-networks-intro.md"] = """# 神经网络入门
+
+## 感知机\n\n```python\noutput = activation(W @ X + b)\n```\n
+## 前向传播\n\n```\n输入层 → 隐藏层1 → 隐藏层2 → 输出层\n```\n
+## 反向传播\n\n1. 计算输出误差\n2. 误差反向传播\n3. 梯度下降更新参数\n
+## 激活函数\n\n- Sigmoid: (0, 1)，容易梯度消失\n- ReLU: max(0, x)，计算简单\n- Tanh: (-1, 1)，零中心化\n- Softmax: 多分类输出\n"""
+
+    topics["nlp-basics.md"] = """# 自然语言处理基础
+
+## 文本预处理\n\n1. 分词: 将文本切分为词/字\n2. 去停用词: 移除"的"、"是"等无意义词\n3. 词干提取: 还原单词基础形式\n4. 向量化: 文本转数值向量\n
+## 词向量\n\n- One-Hot: 稀疏高维\n- Word2Vec: 稠密向量，捕获语义\n- GloVe: 基于共现矩阵\n- BERT: 上下文相关\n
+## 常见任务\n\n- 文本分类: 情感分析、垃圾邮件检测\n- 命名实体识别: 识别人名/地名\n- 机器翻译: 语言转换\n- 问答系统: RAG 是其中一种方案\n"""
+
+    # --- 杂项技术 ---
+    topics["regular-expressions.md"] = """# 正则表达式速查
+
+## 基本元字符\n\n| 符号 | 含义 |\n|:--|:--|\n| . | 任意字符 |\n| * | 0次或多次 |\n| + | 1次或多次 |\n| ? | 0次或1次 |\n| ^ | 行首 |\n| $ | 行尾 |\n| \\d | 数字 |\n| \\w | 字母/数字/下划线 |\n| \\s | 空白字符 |\n
+## Python 使用\n\n```python\nimport re\n\n# 搜索\nresult = re.search(r"pattern", text)\n\n# 查找所有\nmatches = re.findall(r"\\d+", "a1b2c3")  # ['1','2','3']\n\n# 替换\nnew_text = re.sub(r"\\s+", " ", text)\n\n# 分组\nm = re.match(r"(\\w+)@(\\w+)", "user@example")\nprint(m.group(1))  # user\n```\n"""
+
+    topics["yaml-config.md"] = """# YAML 配置文件
+
+## 基本语法\n\n```yaml\nserver:\n  host: "0.0.0.0"\n  port: 8000\n  debug: true\n\ndatabase:\n  url: "postgresql://localhost/db"\n  pool_size: 10\n\n# 列表\nallowed_origins:\n  - "http://localhost:5173"\n  - "http://localhost:3000"\n```\n
+## Python 读写\n\n```python\nimport yaml\n\nwith open("config.yaml") as f:\n    config = yaml.safe_load(f)\n\nwith open("output.yaml", "w") as f:\n    yaml.dump(config, f, allow_unicode=True)\n```\n
+## YAML vs JSON\n- YAML: 可读性好，支持注释\n- JSON: 更严格，通用性更强\n"""
+
+    topics["websocket-protocol.md"] = """# WebSocket 协议
+
+WebSocket 是全双工通信协议，适合实时应用。\n
+## 与 SSE 对比\n\n| 特性 | WebSocket | SSE |\n|:--|:--|:--|\n| 方向 | 双向 | 服务器→客户端 |\n| 协议 | ws:// | HTTP |\n| 复杂度 | 较高 | 低 |\n
+## Python 实现\n\n```python\n# FastAPI WebSocket\nfrom fastapi import WebSocket\n\n@app.websocket("/ws")\nasync def websocket_endpoint(ws: WebSocket):\n    await ws.accept()\n    while True:\n        data = await ws.receive_text()\n        await ws.send_text(f"Echo: {data}")\n```\n
+## JavaScript 客户端\n\n```javascript\nconst ws = new WebSocket("ws://localhost:8000/ws");\nws.onmessage = (event) => console.log(event.data);\nws.send("Hello Server!");\n```\n"""
+
+    topics["microservices-basics.md"] = """# 微服务架构基础
+
+## 核心原则\n\n1. 单一职责: 每个服务只做一件事\n2. 独立部署: 服务间独立发布\n3. 去中心化: 每个服务独立数据库\n4. 容错设计: 服务故障不影响整体\n
+## 通信方式\n\n- 同步: REST API, gRPC\n- 异步: 消息队列 (Kafka, RabbitMQ)\n- 事件驱动: Event Bus\n
+## API 网关\n\n统一入口，负责路由、认证、限流：\n\n```\n客户端 → API 网关 → 服务A/服务B/服务C\n```\n
+## 与单体架构对比\n\n| 维度 | 单体 | 微服务 |\n|:--|:--|:--|\n| 复杂度 | 低 | 高 |\n| 扩展性 | 差 | 好 |\n| 部署 | 简单 | 复杂 |\n"""
+
+    topics["tdd-test-driven.md"] = """# 测试驱动开发 (TDD)
+
+## TDD 循环\n\n```\n1. 写测试 → 2. 运行测试(红) → 3. 写代码 → 4. 运行测试(绿) → 5. 重构\n```\n
+## pytest 示例\n\n```python\n# test_rag.py\ndef test_query_returns_answer():\n    result = query("什么是Python?")\n    assert result["answer"]\n    assert len(result["sources"]) > 0\n\ndef test_empty_question():\n    result = query("")\n    assert result["answer"] == "未在文档中找到相关内容。"\n```\n\n## 测试金字塔\n\n```\n      /\\\n     /E2E\\       少量\n    /______\\\n   /集成测试\\    适量\n  /__________\\\n /  单元测试   \\  大量\n/______________\\\n```\n"""
+
+    topics["code-review-practices.md"] = """# 代码审查最佳实践
+
+## 审查清单\n\n- [ ] 逻辑正确性\n- [ ] 边界条件处理\n- [ ] 错误处理是否完整\n- [ ] 命名是否清晰\n- [ ] 是否有重复代码\n- [ ] 是否符合项目规范\n
+## 提交粒度\n\n每个 commit 应该只做一件事：\n\n```bash\ngit commit -m "feat: 添加用户注册接口"\ngit commit -m "fix: 修复邮箱验证正则表达式"\ngit commit -m "refactor: 提取公共验证逻辑"\n```\n
+## 审查注释格式\n\n```\n[建议] 这里可以用列表推导式简化\n[必须] 缺少空值检查\n[优化] 这个循环可以提取为单独函数\n```\n"""
+
+    topics["oop-inheritance-polymorphism.md"] = """# 面向对象：继承与多态
+
+## 继承\n\n```python\nclass Animal:\n    def __init__(self, name):\n        self.name = name\n    def speak(self):\n        raise NotImplementedError\n\nclass Dog(Animal):\n    def speak(self):\n        return "汪汪！"\n\nclass Cat(Animal):\n    def speak(self):\n        return "喵喵！"\n```\n
+## 多态\n\n```python\ndef make_sound(animal: Animal):\n    print(f"{animal.name}: {animal.speak()}")\n\nanimals = [Dog("旺财"), Cat("咪咪")]\nfor a in animals:\n    make_sound(a)\n```\n
+## 抽象类\n\n```python\nfrom abc import ABC, abstractmethod\n\nclass BaseLoader(ABC):\n    @abstractmethod\n    def load(self, path: str): ...\n```\n"""
+
+    topics["data-structures-algorithms.md"] = """# 数据结构与算法
+
+## 时间复杂度\n\n| 复杂度 | 示例 |\n|:--|:--|\n| O(1) | 数组索引 |\n| O(log n) | 二分查找 |\n| O(n) | 线性搜索 |\n| O(n log n) | 快速排序 |\n| O(n^2) | 冒泡排序 |\n
+## 常用数据结构\n\n- 数组/列表: O(1) 索引\n- 链表: O(1) 插入删除\n- 哈希表: O(1) 查找\n- 栈/队列: LIFO/FIFO\n- 树/图: 层次关系\n
+## Python 实现\n\n```python\n# 二分查找\ndef binary_search(arr, target):\n    left, right = 0, len(arr) - 1\n    while left <= right:\n        mid = (left + right) // 2\n        if arr[mid] == target:\n            return mid\n        elif arr[mid] < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n    return -1\n```\n"""
+
+    return topics
+
 
 def generate_all_docs(output_dir: str) -> int:
     """将所有文档写入目标目录。"""
@@ -1437,6 +1583,7 @@ def generate_all_docs(output_dir: str) -> int:
     all_docs.update(_generate_ai_topics())
     all_docs.update(_generate_devops_topics())
     all_docs.update(_generate_security_topics())
+    all_docs.update(_generate_more_topics())
 
     count = 0
     for filename, content in all_docs.items():
