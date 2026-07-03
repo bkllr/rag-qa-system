@@ -110,8 +110,10 @@ goto menu
 :restart_both
 cls
 echo === Restarting Both Services ===
-taskkill /FI "WINDOWTITLE eq RAG-Backend*" /F 2^>nul
-taskkill /FI "WINDOWTITLE eq RAG-Frontend*" /F 2^>nul
+echo Killing processes on ports 8000 and 5173...
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":8000.*LISTENING"') do taskkill /PID %%a /F 2^>nul
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":5173.*LISTENING"') do taskkill /PID %%a /F 2^>nul
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":5174.*LISTENING"') do taskkill /PID %%a /F 2^>nul
 timeout /t 2 /nobreak ^>nul
 goto start_both
 
