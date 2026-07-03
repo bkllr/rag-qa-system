@@ -24,6 +24,12 @@ backend/chroma_db/
 node_modules/
 frontend/node_modules/
 frontend/dist/
+package-lock.json
+
+# Python 缓存
+*.pyc
+.pytest_cache/
+.ruff_cache/
 
 # IDE
 .vscode/
@@ -36,8 +42,12 @@ frontend/dist/
 Thumbs.db
 desktop.ini
 
-# AI 对话截图（可选提交，这里不忽略）
+# AI 对话截图（用户自行管理）
 # backend/ai-logs/
 
 # 日志
 *.log
+
+# 临时文件
+*.tmp
+*.bak
