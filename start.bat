@@ -138,10 +138,10 @@ goto menu
 cls
 echo === Restarting Both Services ===
 echo Killing processes on ports 8000 and 5173...
-for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":8000.*LISTENING"') do taskkill /PID %%a /F 2^>nul
-for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":5173.*LISTENING"') do taskkill /PID %%a /F 2^>nul
-for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":5174.*LISTENING"') do taskkill /PID %%a /F 2^>nul
-timeout /t 2 /nobreak ^>nul
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":8000.*LISTENING"') do taskkill /PID %%a /F >nul 2>&1
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":5173.*LISTENING"') do taskkill /PID %%a /F >nul 2>&1
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":5174.*LISTENING"') do taskkill /PID %%a /F >nul 2>&1
+timeout /t 2 /nobreak >nul
 goto start_both
 
 :kill_and_start
@@ -152,19 +152,19 @@ echo.
 echo Scanning ports...
 for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":8000.*LISTENING"') do (
     echo Killing PID %%a on port 8000...
-    taskkill /PID %%a /F 2^>nul
+    taskkill /PID %%a /F >nul 2>&1
 )
 for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":5173.*LISTENING"') do (
     echo Killing PID %%a on port 5173...
-    taskkill /PID %%a /F 2^>nul
+    taskkill /PID %%a /F >nul 2>&1
 )
 for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":5174.*LISTENING"') do (
     echo Killing PID %%a on port 5174...
-    taskkill /PID %%a /F 2^>nul
+    taskkill /PID %%a /F >nul 2>&1
 )
 echo.
 echo Waiting 2 seconds...
-timeout /t 2 /nobreak ^>nul
+timeout /t 2 /nobreak >nul
 echo.
 set "p8000="
 for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":8000.*LISTENING"') do set "p8000=1"
@@ -176,7 +176,7 @@ if defined p8000 (
     echo [OK] Ports are clean. Starting services...
 )
 endlocal
-timeout /t 1 /nobreak ^>nul
+timeout /t 1 /nobreak >nul
 goto start_both
 
 :exit
