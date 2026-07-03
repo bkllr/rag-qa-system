@@ -18,13 +18,19 @@
       <span v-if="!disabled">发送</span>
       <span v-else class="spinner"></span>
     </button>
+    <button
+      v-if="disabled"
+      class="stop-button"
+      @click="$emit('stop')"
+      title="停止生成"
+    >⏹</button>
   </div>
 </template>
 
 <script setup>
 import { ref, nextTick } from 'vue'
 
-const emit = defineEmits(['send'])
+const emit = defineEmits(['send', 'stop'])
 
 const props = defineProps({
   disabled: {
@@ -128,6 +134,25 @@ function autoResize() {
   border-top-color: #fff;
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
+}
+
+.stop-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #fca5a5;
+  border-radius: 10px;
+  background: #fef2f2;
+  color: #ef4444;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.stop-button:hover {
+  background: #fee2e2;
+  border-color: #f87171;
 }
 
 @keyframes spin {

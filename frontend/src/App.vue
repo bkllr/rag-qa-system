@@ -31,6 +31,7 @@
       :disabled="loading"
       :placeholder="loading ? 'AI 正在思考中...' : '输入技术问题，Enter 发送'"
       @send="handleSend"
+      @stop="handleStop"
     />
   </div>
 </template>
@@ -106,6 +107,23 @@ function handleClear() {
     cancelStream = null
   }
   messages.value = []
+  loading.value = false
+}
+
+// ── 停止生成 ──
+function handleStop() {
+  if (cancelStream) {
+    cancelStream()
+    cancelStream = null
+  }
+  // 将最后一条 AI 消息标记为已停止
+  const lastMsg = messages.value[messages.value.length - 1]
+  if (lastMsg && lastMsg.role === 'assistant' && lastMsg.streaming) {
+    lastMsg.streaming = false
+    if (!lastMsg.content) {
+      lastMsg.content = '（已停止生成）'
+    }
+  }
   loading.value = false
 }
 
