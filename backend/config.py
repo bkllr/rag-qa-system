@@ -31,6 +31,11 @@ LLM_MODEL_NAME = os.getenv("LLM_MODEL_NAME", "deepseek-chat")
 # Embedding 配置
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "shibing624/text2vec-base-chinese")
 
+# HuggingFace 镜像（国内访问加速）
+HF_ENDPOINT = os.getenv("HF_ENDPOINT", "")
+if HF_ENDPOINT:
+    os.environ["HF_ENDPOINT"] = HF_ENDPOINT
+
 
 # ──────────────────────────────────────────────
 # 工厂函数
